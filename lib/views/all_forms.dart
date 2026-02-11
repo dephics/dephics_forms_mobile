@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:survey_app/views/survey_input.dart';
+import 'package:survey_app/views/in_form.dart';
+
+import 'package:survey_app/resources/colors.dart';
 
 class AllForms extends StatefulWidget {
   const AllForms({super.key});
@@ -14,7 +16,7 @@ class _AllFormsState extends State<AllForms> {
       title: 'Knauff Customer Survey',
       company: 'Cornerstone Limited',
       inputs: 23,
-      color: Colors.blue.shade700,
+      color: AppColors.knaufBlue,
     ),
   ];
 
@@ -24,13 +26,14 @@ class _AllFormsState extends State<AllForms> {
       // backgroundColor: Colors.grey.shade50,
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: Colors.blue.shade700,
+        backgroundColor: AppColors.knaufBlue,
+        automaticallyImplyLeading: false,
         title: const Text(
           'All Forms',
           style: TextStyle(
             fontSize: 28,
             fontWeight: FontWeight.bold,
-            color: Colors.white,
+            color: AppColors.textOnPrimary,
           ),
         ),
         actions: [
@@ -53,7 +56,7 @@ class _AllFormsState extends State<AllForms> {
               Navigator.of(context).push(
                 MaterialPageRoute(
                   builder: (context) {
-                    return OutletInteractionReportScreen();
+                    return InForm();
                   },
                 ),
               );
@@ -86,7 +89,7 @@ class FormCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.blue.withOpacity(0.1),
+            color: AppColors.knaufBlue.withOpacity(0.1),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -99,7 +102,7 @@ class FormCard extends StatelessWidget {
             Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (context) {
-                  return OutletInteractionReportScreen();
+                  return InForm();
                 },
               ),
             );
@@ -123,7 +126,7 @@ class FormCard extends StatelessWidget {
                   ),
                   child: const Icon(
                     Icons.description_outlined,
-                    color: Colors.white,
+                    color: AppColors.textOnPrimary,
                     size: 28,
                   ),
                 ),
@@ -139,7 +142,7 @@ class FormCard extends StatelessWidget {
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
-                          color: Colors.black87,
+                          color: AppColors.textPrimary,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -149,7 +152,7 @@ class FormCard extends StatelessWidget {
                         form.company,
                         style: TextStyle(
                           fontSize: 13,
-                          color: Colors.grey.shade600,
+                          color: AppColors.textSecondary,
                         ),
                       ),
                       const SizedBox(height: 8),
@@ -162,13 +165,13 @@ class FormCard extends StatelessWidget {
                         ),
                         decoration: BoxDecoration(
                           color: form.inputs > 0
-                              ? Colors.blue.shade50
-                              : Colors.grey.shade100,
+                              ? AppColors.primaryContainer
+                              : AppColors.knaufLightGrey,
                           borderRadius: BorderRadius.circular(20),
                           border: Border.all(
                             color: form.inputs > 0
-                                ? Colors.blue.shade200
-                                : Colors.grey.shade300,
+                                ? AppColors.primary
+                                : AppColors.border,
                             width: 1,
                           ),
                         ),
@@ -179,8 +182,8 @@ class FormCard extends StatelessWidget {
                               Icons.input,
                               size: 14,
                               color: form.inputs > 0
-                                  ? Colors.blue.shade700
-                                  : Colors.grey.shade600,
+                                  ? AppColors.knaufBlue
+                                  : AppColors.knaufGrey,
                             ),
                             const SizedBox(width: 4),
                             Text(
@@ -189,8 +192,8 @@ class FormCard extends StatelessWidget {
                                 fontSize: 12,
                                 fontWeight: FontWeight.w500,
                                 color: form.inputs > 0
-                                    ? Colors.blue.shade700
-                                    : Colors.grey.shade600,
+                                    ? AppColors.knaufBlue
+                                    : AppColors.knaufGrey,
                               ),
                             ),
                           ],
@@ -204,7 +207,7 @@ class FormCard extends StatelessWidget {
                 Icon(
                   Icons.arrow_forward_ios,
                   size: 16,
-                  color: Colors.grey.shade400,
+                  color: AppColors.textSecondary,
                 ),
               ],
             ),

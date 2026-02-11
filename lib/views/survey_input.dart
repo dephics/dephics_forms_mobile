@@ -5,6 +5,7 @@ import 'package:survey_app/models/outlet_report_payload.dart';
 import 'package:survey_app/resources/outlet_categories.dart';
 import 'package:survey_app/resources/tanzania_regions.dart';
 import 'package:survey_app/services/outlet_report_service.dart';
+import 'package:survey_app/resources/colors.dart';
 
 class OutletInteractionReportScreen extends StatefulWidget {
   const OutletInteractionReportScreen({super.key});
@@ -134,16 +135,16 @@ class _OutletInteractionReportScreenState
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        // Top app bar greeting the user.
-        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+        backgroundColor: AppColors.knaufBlue,
+        foregroundColor: Colors.white,
         elevation: 0,
-        title: const Text(
-          'Hello, CornerStone',
-          style: TextStyle(color: Colors.black87, fontSize: 16),
-        ),
+        // title: const Text(
+        //   'Hello, CornerStone',
+        //   style: TextStyle(color: AppColors.textOnPrimary, fontSize: 16),
+        // ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.more_vert, color: Colors.black87),
+            icon: const Icon(Icons.more_vert, color: AppColors.textOnPrimary),
             onPressed: () {},
           ),
         ],
@@ -156,7 +157,7 @@ class _OutletInteractionReportScreenState
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(24),
-              color: Theme.of(context).colorScheme.primaryContainer,
+              color: AppColors.primaryContainer,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -165,7 +166,7 @@ class _OutletInteractionReportScreenState
                     style: TextStyle(
                       fontSize: 12,
                       letterSpacing: 2,
-                      color: Colors.grey[700],
+                      color: AppColors.textSecondary,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -175,13 +176,13 @@ class _OutletInteractionReportScreenState
                     style: TextStyle(
                       fontSize: 32,
                       fontWeight: FontWeight.bold,
-                      color: Colors.black87,
+                      color: AppColors.textPrimary,
                     ),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     'Document every visit with photos, availability insights, and customer feedback in one modern interface.',
-                    style: TextStyle(fontSize: 14, color: Colors.grey[700]),
+                    style: TextStyle(fontSize: 14, color: AppColors.textSecondary),
                   ),
                 ],
               ),
@@ -305,11 +306,11 @@ class _OutletInteractionReportScreenState
     // Section: Basic outlet contact information (name, phone, category).
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.cardBackground,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: AppColors.shadowLight,
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -351,11 +352,11 @@ class _OutletInteractionReportScreenState
     // Section: Physical location details, GPS, and outlet photos.
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.cardBackground,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: AppColors.shadowLight,
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -407,8 +408,8 @@ class _OutletInteractionReportScreenState
                 child: ElevatedButton(
                   onPressed: _isGettingLocation ? null : _useCurrentLocation,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Theme.of(context).colorScheme.primary,
-                    foregroundColor: Colors.white,
+                    backgroundColor: AppColors.buttonPrimary,
+                    foregroundColor: AppColors.buttonTextPrimary,
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(24),
@@ -421,7 +422,7 @@ class _OutletInteractionReportScreenState
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
                             valueColor: AlwaysStoppedAnimation<Color>(
-                              Colors.white,
+                              AppColors.buttonTextPrimary,
                             ),
                           ),
                         )
@@ -461,11 +462,11 @@ class _OutletInteractionReportScreenState
     // Section: Awareness and availability of Knauf products.
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.cardBackground,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: AppColors.shadowLight,
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -522,11 +523,11 @@ class _OutletInteractionReportScreenState
   Widget _buildCompetitorLandscapeSection() {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.cardBackground,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: AppColors.shadowLight,
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -563,11 +564,11 @@ class _OutletInteractionReportScreenState
   Widget _buildCustomerFeedbackSection() {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.cardBackground,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: AppColors.shadowLight,
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -592,11 +593,11 @@ class _OutletInteractionReportScreenState
   Widget _buildOrderStatusSection() {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.cardBackground,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: AppColors.shadowLight,
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -659,11 +660,11 @@ class _OutletInteractionReportScreenState
   Widget _buildAdditionalNotesSection() {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.cardBackground,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: AppColors.shadowLight,
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -698,21 +699,21 @@ class _OutletInteractionReportScreenState
           maxLines: maxLines,
           decoration: InputDecoration(
             hintText: hintText,
-            hintStyle: TextStyle(color: Colors.grey[400]),
+            hintStyle: TextStyle(color: AppColors.textSecondary),
             filled: true,
-            fillColor: Colors.white,
+            fillColor: AppColors.inputBackground,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: Colors.grey[300]!),
+              borderSide: BorderSide(color: AppColors.inputBorder),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: Colors.grey[300]!),
+              borderSide: BorderSide(color: AppColors.inputBorder),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
               borderSide: BorderSide(
-                color: Theme.of(context).colorScheme.primary,
+                color: AppColors.inputFocusedBorder,
                 width: 2,
               ),
             ),
@@ -741,9 +742,9 @@ class _OutletInteractionReportScreenState
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12),
               decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey[300]!),
+                border: Border.all(color: AppColors.inputBorder),
                 borderRadius: BorderRadius.circular(8),
-                color: Colors.white,
+                color: AppColors.cardBackground,
               ),
               child: Row(
                 children: [
@@ -755,7 +756,7 @@ class _OutletInteractionReportScreenState
                       return Container(
                         width: 24,
                         height: 16,
-                        color: Colors.green[700],
+                        color: AppColors.success,
                       );
                     },
                   ),
@@ -785,21 +786,21 @@ class _OutletInteractionReportScreenState
                 keyboardType: TextInputType.phone,
                 decoration: InputDecoration(
                   hintText: '712 345 678',
-                  hintStyle: TextStyle(color: Colors.grey[400]),
+                  hintStyle: TextStyle(color: AppColors.textSecondary),
                   filled: true,
-                  fillColor: Colors.white,
+                  fillColor: AppColors.inputBackground,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide(color: Colors.grey[300]!),
+                    borderSide: BorderSide(color: AppColors.inputBorder),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide(color: Colors.grey[300]!),
+                    borderSide: BorderSide(color: AppColors.inputBorder),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                     borderSide: BorderSide(
-                      color: Theme.of(context).colorScheme.primary,
+                      color: AppColors.inputFocusedBorder,
                       width: 2,
                     ),
                   ),
@@ -815,7 +816,7 @@ class _OutletInteractionReportScreenState
         const SizedBox(height: 4),
         Text(
           'Format: 000 000 000',
-          style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+          style: TextStyle(fontSize: 12, color: AppColors.textSecondary),
         ),
       ],
     );
@@ -840,19 +841,19 @@ class _OutletInteractionReportScreenState
           value: value,
           decoration: InputDecoration(
             filled: true,
-            fillColor: Colors.white,
+            fillColor: AppColors.inputBackground,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: Colors.grey[300]!),
+              borderSide: BorderSide(color: AppColors.inputBorder),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: Colors.grey[300]!),
+              borderSide: BorderSide(color: AppColors.inputBorder),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
               borderSide: BorderSide(
-                color: Theme.of(context).colorScheme.primary,
+                color: AppColors.inputFocusedBorder,
                 width: 2,
               ),
             ),
@@ -865,7 +866,7 @@ class _OutletInteractionReportScreenState
             value == null
                 ? 'Select ${label.split('/')[0].trim().toLowerCase()}'
                 : '',
-            style: TextStyle(color: Colors.grey[400]),
+            style: TextStyle(color: AppColors.textSecondary),
           ),
           items: items
               .map((item) => DropdownMenuItem(value: item, child: Text(item)))
@@ -894,7 +895,7 @@ class _OutletInteractionReportScreenState
         OutlinedButton(
           onPressed: onPressed,
           style: OutlinedButton.styleFrom(
-            side: BorderSide(color: Colors.grey[300]!),
+            side: BorderSide(color: AppColors.inputBorder),
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8),
@@ -905,11 +906,11 @@ class _OutletInteractionReportScreenState
             children: [
               const Text(
                 'Choose File',
-                style: TextStyle(color: Colors.black87),
+                style: TextStyle(color: AppColors.textPrimary),
               ),
               Text(
                 fileName,
-                style: TextStyle(color: Colors.grey[600], fontSize: 12),
+                style: TextStyle(color: AppColors.textSecondary, fontSize: 12),
               ),
             ],
           ),
@@ -917,7 +918,7 @@ class _OutletInteractionReportScreenState
         const SizedBox(height: 4),
         Text(
           description,
-          style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+          style: TextStyle(fontSize: 12, color: AppColors.textSecondary),
         ),
       ],
     );
@@ -939,7 +940,7 @@ class _OutletInteractionReportScreenState
         const SizedBox(height: 8),
         Container(
           decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey[300]!),
+            border: Border.all(color: AppColors.inputBorder),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Column(
@@ -949,15 +950,15 @@ class _OutletInteractionReportScreenState
                 value: true,
                 groupValue: value,
                 onChanged: onChanged,
-                activeColor: Theme.of(context).colorScheme.primary,
+                activeColor: AppColors.buttonPrimary,
               ),
-              Divider(height: 1, color: Colors.grey[300]),
+              Divider(height: 1, color: AppColors.inputBorder),
               RadioListTile<bool>(
                 title: const Text('No'),
                 value: false,
                 groupValue: value,
                 onChanged: onChanged,
-                activeColor: Theme.of(context).colorScheme.primary,
+                activeColor: AppColors.buttonPrimary,
               ),
             ],
           ),
@@ -1407,7 +1408,7 @@ class _OutletInteractionReportScreenState
         SnackBar(
           content: Text('Submit failed: $e'),
           behavior: SnackBarBehavior.floating,
-          backgroundColor: Theme.of(context).colorScheme.error,
+          backgroundColor: AppColors.error,
         ),
       );
     }
@@ -1420,8 +1421,8 @@ class _OutletInteractionReportScreenState
       child: ElevatedButton(
         onPressed: _submitReport,
         style: ElevatedButton.styleFrom(
-          backgroundColor: Theme.of(context).colorScheme.primary,
-          foregroundColor: Colors.white,
+          backgroundColor: AppColors.buttonPrimary,
+          foregroundColor: AppColors.buttonTextPrimary,
           padding: const EdgeInsets.symmetric(vertical: 16),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         ),

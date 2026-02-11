@@ -1,11 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:survey_app/models/outlet_report_payload.dart';
 import 'dart:convert';
-import 'dart:io';
-import 'dart:math';
-// import 'package:dmi_app/utils/globalfns.dart';
-// import 'package:file_picker/file_picker.dart';
-// import 'package:firebase_storage/firebase_storage.dart';
 import 'package:http/http.dart' as http;
 
 /// Service that submits the outlet report.
@@ -57,9 +52,9 @@ const respGood = "isGood";
 const respBody = 'body';
 const respError = "error";
 const prodGenrl = "https://cornerstone.core.tz/promo/form-data";
-const debugGenrl = "http://192.168.100.16:1235/graphql";
-const prodAuthrl = "https://api.sbc.dephics.net/graphql/auth";
-const debugAuthrl = "http://192.168.100.16:1235/graphql/auth";
+// const debugGenrl = "http://192.168.100.16:1235/graphql";
+const prodAuthrl = "https://cornerstone.core.tz/auth/graphql/auth";
+// const debugAuthrl = "http://192.168.100.16:1235/graphql/auth";
 
 class YeAuth {
   var yeauthrl = Uri.parse(prodAuthrl);

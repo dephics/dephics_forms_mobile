@@ -69,6 +69,16 @@ class _OutletInteractionReportScreenState
     'Knauf Metal Profile': false,
   };
 
+  // Quantity controllers for each ordered product.
+  final Map<String, TextEditingController> _productQuantities = {
+    'Double Elephant': TextEditingController(),
+    'Easy Board': TextEditingController(),
+    'Finish Bora': TextEditingController(),
+    'Joint Bora': TextEditingController(),
+    'Knauf Wall Put': TextEditingController(),
+    'Knauf Metal Profile': TextEditingController(),
+  };
+
   // Checkbox values for competitor products available at the outlet.
   final Map<String, bool> _competitorProducts = {
     'BBG Board': false,
@@ -128,6 +138,12 @@ class _OutletInteractionReportScreenState
     _challengesController.dispose();
     _topCompetitorController.dispose();
     _additionalNotesController.dispose();
+    
+    // Dispose product quantity controllers
+    for (final controller in _productQuantities.values) {
+      controller.dispose();
+    }
+    
     super.dispose();
   }
 
@@ -1068,84 +1084,88 @@ class _OutletInteractionReportScreenState
     );
   }
 
-  // Helper widget: checklist of ordered products when customer places an order.
+  // Helper widget: checklist of ordered products with quantity fields when customer places an order.
   Widget _buildOrderedProductsCheckboxes() {
     return Column(
       children: [
-        CheckboxListTile(
-          title: const Text('Double Elephant'),
-          value: _orderedProducts['Double Elephant'],
-          onChanged: (value) {
-            setState(() {
-              _orderedProducts['Double Elephant'] = value ?? false;
-            });
-          },
-          activeColor: Theme.of(context).colorScheme.primary,
-          controlAffinity: ListTileControlAffinity.leading,
-          contentPadding: EdgeInsets.zero,
-        ),
-        CheckboxListTile(
-          title: const Text('Easy Board'),
-          value: _orderedProducts['Easy Board'],
-          onChanged: (value) {
-            setState(() {
-              _orderedProducts['Easy Board'] = value ?? false;
-            });
-          },
-          activeColor: Theme.of(context).colorScheme.primary,
-          controlAffinity: ListTileControlAffinity.leading,
-          contentPadding: EdgeInsets.zero,
-        ),
-        CheckboxListTile(
-          title: const Text('Finish Bora'),
-          value: _orderedProducts['Finish Bora'],
-          onChanged: (value) {
-            setState(() {
-              _orderedProducts['Finish Bora'] = value ?? false;
-            });
-          },
-          activeColor: Theme.of(context).colorScheme.primary,
-          controlAffinity: ListTileControlAffinity.leading,
-          contentPadding: EdgeInsets.zero,
-        ),
-        CheckboxListTile(
-          title: const Text('Joint Bora'),
-          value: _orderedProducts['Joint Bora'],
-          onChanged: (value) {
-            setState(() {
-              _orderedProducts['Joint Bora'] = value ?? false;
-            });
-          },
-          activeColor: Theme.of(context).colorScheme.primary,
-          controlAffinity: ListTileControlAffinity.leading,
-          contentPadding: EdgeInsets.zero,
-        ),
-        CheckboxListTile(
-          title: const Text('Knauf Wall Put'),
-          value: _orderedProducts['Knauf Wall Put'],
-          onChanged: (value) {
-            setState(() {
-              _orderedProducts['Knauf Wall Put'] = value ?? false;
-            });
-          },
-          activeColor: Theme.of(context).colorScheme.primary,
-          controlAffinity: ListTileControlAffinity.leading,
-          contentPadding: EdgeInsets.zero,
-        ),
-        CheckboxListTile(
-          title: const Text('Knauf Metal Profile'),
-          value: _orderedProducts['Knauf Metal Profile'],
-          onChanged: (value) {
-            setState(() {
-              _orderedProducts['Knauf Metal Profile'] = value ?? false;
-            });
-          },
-          activeColor: Theme.of(context).colorScheme.primary,
-          controlAffinity: ListTileControlAffinity.leading,
-          contentPadding: EdgeInsets.zero,
-        ),
+        _buildOrderedProductItem('Double Elephant'),
+        _buildOrderedProductItem('Easy Board'),
+        _buildOrderedProductItem('Finish Bora'),
+        _buildOrderedProductItem('Joint Bora'),
+        _buildOrderedProductItem('Knauf Wall Put'),
+        _buildOrderedProductItem('Knauf Metal Profile'),
       ],
     );
+  }
+
+  // Helper widget for individual product with checkbox and quantity field
+  Widget _buildOrderedProductItem(String productName) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: Row(
+        children: [
+          Checkbox(
+            value: _orderedProducts[productName],
+            onChanged: (value) {
+              setState(() {
+                _orderedProducts[productName] = value ?? false;
+              });
+            },
+            activeColor: AppColors.knaufBlue,
+          ),
+          Expanded(
+            child: Text(
+              productName,
+              style: const TextStyle(fontSize: 14),
+            ),
+          ),
+          if (_orderedProducts[productName] == true)
+            SizedBox(
+              width: 80,
+              child: TextField(
+                controller: _productQuantities[productName],
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                  hintText: 'Qty',
+                  hintStyle: TextStyle(color: AppColors.textSecondary),
+                  filled: true,
+                  fillColor: AppColors.inputBackground,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide(color: AppColors.inputBorder),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide(color: AppColors.inputBorder),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide(color: AppColors.inputFocusedBorder, width: 2),
+                  ),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  // Helper method to build order quantities map
+  Map<String, int>? _buildOrderQuantities() {
+    final Map<String, int> quantities = {};
+    
+    for (final entry in _orderedProducts.entries) {
+      if (entry.value == true) { // if product is selected
+        final quantityText = _productQuantities[entry.key]?.text;
+        final quantity = int.tryParse(quantityText ?? '') ?? 0;
+        if (quantity > 0) {
+          quantities[entry.key] = quantity;
+        }
+      }
+    }
+    
+    return quantities.isEmpty ? null : quantities;
   }
 
   // Helper widget: checklist of competitor products available at the outlet.
@@ -1384,7 +1404,7 @@ class _OutletInteractionReportScreenState
       orderProducts: orderProductsSelected.isEmpty
           ? null
           : orderProductsSelected,
-      orderQuantities: null,
+      orderQuantities: _buildOrderQuantities(),
       orderStatus: _selectedOrderStatus,
       brandingMaterials: brandingSelected.isEmpty ? null : brandingSelected,
       outletPictureAfter: null,
@@ -1399,7 +1419,19 @@ class _OutletInteractionReportScreenState
 
   /// Shows a progress dialog, submits the report, then closes and shows result.
   Future<void> _submitReport() async {
-    if (!_formKey.currentState!.validate()) return;
+    if (!_formKey.currentState!.validate()) {
+      // Show snackbar when validation fails
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Please fill in all required fields'),
+            backgroundColor: AppColors.error,
+            duration: Duration(seconds: 3),
+          ),
+        );
+      }
+      return;
+    }
 
     if (!mounted) return;
     showDialog<void>(

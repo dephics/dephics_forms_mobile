@@ -562,7 +562,7 @@ class _OutletInteractionReportScreenState
           ),
           const SizedBox(height: 24),
           const Text(
-            'Competitors product availability / Bidhaa za Washindani',
+            'Competitors product availability / Bidhaa za Washindani *',
             style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
           ),
           const SizedBox(height: 12),
@@ -643,7 +643,7 @@ class _OutletInteractionReportScreenState
           const SizedBox(height: 24),
           if (_orderPlaced == true) ...[
             const Text(
-              'Order products requested',
+              'Order products requested *',
               style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
             ),
             const SizedBox(height: 12),
@@ -1168,6 +1168,16 @@ class _OutletInteractionReportScreenState
     return quantities.isEmpty ? null : quantities;
   }
 
+  // Helper method to validate competitor checkboxes
+  bool _validateCompetitorProducts() {
+    return _competitorProducts.values.any((selected) => selected == true);
+  }
+
+  // Helper method to validate ordered products checkboxes
+  bool _validateOrderedProducts() {
+    return _orderedProducts.values.any((selected) => selected == true);
+  }
+
   // Helper widget: checklist of competitor products available at the outlet.
   Widget _buildCompetitorCheckboxes() {
     return Column(
@@ -1425,6 +1435,34 @@ class _OutletInteractionReportScreenState
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Please fill in all required fields'),
+            backgroundColor: AppColors.error,
+            duration: Duration(seconds: 3),
+          ),
+        );
+      }
+      return;
+    }
+
+    // Validate competitor products checkbox
+    if (!_validateCompetitorProducts()) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Please select at least one competitor product'),
+            backgroundColor: AppColors.error,
+            duration: Duration(seconds: 3),
+          ),
+        );
+      }
+      return;
+    }
+
+    // Validate ordered products checkbox (only if order was placed)
+    if (_orderPlaced == true && !_validateOrderedProducts()) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Please select at least one product to order'),
             backgroundColor: AppColors.error,
             duration: Duration(seconds: 3),
           ),

@@ -54,6 +54,7 @@ const respGood = "isGood";
 const respBody = 'body';
 const respError = "error";
 const prodPulGenrl = "https://cornerstone.core.tz/promo/graphql";
+const prodPicGenrl = "https://cornerstone.core.tz/promo/upload-files"; // {files:[]}
 const prodPosGenrl = "https://cornerstone.core.tz/promo/form-data";
 // const debugGenrl = "http://192.168.100.16:1235/graphql";
 const prodAuthrl = "https://cornerstone.core.tz/auth/graphql/auth";
@@ -78,6 +79,14 @@ class YeAuth {
       };
     }
   }
+
+  /*
+
+{
+files: 
+}
+
+  */
 }
 
 class YeGenV1 {
@@ -147,6 +156,7 @@ class YeGenV1 {
 class YeGenV2 {
   var yegenrl = Uri.parse(prodPosGenrl);
   var genAuthRl = Uri.parse(prodAuthrl);
+  var genPicRl = Uri.parse(prodPicGenrl);
   shooterAuth({variables, query}) async {
     try {
       var response = await http.post(
@@ -196,6 +206,33 @@ class YeGenV2 {
       var uAccessToken = prefs.getString(ygAccesstoken);
       var response = await http.post(
         yegenrl,
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'Authorization': "Bearer $uAccessToken",
+        },
+        body: jsonEncode(variables),
+        // body: jsonEncode({'query': query, 'variables': variables}),
+      );
+
+      var body = jsonDecode(response.body);
+      debugPrint("Kookay: $variables");
+      return {respGood: true, respBody: body};
+    } catch (e) {
+      debugPrint("Kooked: $variables");
+      return {
+        respGood: false,
+        respBody: {respError: "$e"},
+      };
+    }
+  }
+
+  Future picShoot({variables, query}) async {
+    try {
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      var uAccessToken = prefs.getString(ygAccesstoken);
+      var response = await http.post(
+        genPicRl,
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json',

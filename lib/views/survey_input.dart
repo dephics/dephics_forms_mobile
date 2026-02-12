@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:survey_app/config/report_api_config.dart';
@@ -5,6 +8,7 @@ import 'package:survey_app/models/outlet_report_payload.dart';
 import 'package:survey_app/resources/outlet_categories.dart';
 import 'package:survey_app/resources/tanzania_regions.dart';
 import 'package:survey_app/services/outlet_report_service.dart';
+import 'package:http/http.dart' as http;
 import 'package:survey_app/resources/colors.dart';
 
 class OutletInteractionReportScreen extends StatefulWidget {
@@ -455,7 +459,15 @@ class _OutletInteractionReportScreenState
             label: 'Outlet picture / Picha ya Duka',
             description: 'Take a clear photo of storefront.',
             fileName: _outletPicture,
-            onPressed: () {
+            onPressed: () async{
+              FilePickerResult? result = await FilePicker.platform.pickFiles(allowMultiple: true);
+              if (result != null) {
+                List<File> files = result.paths.map((path) => File(path!)).toList();
+                var pazs = result.paths;
+                uploadFiles(result.paths);
+              } else {
+                // User canceled the picker
+              }
               setState(() {
                 _outletPicture = 'storefront.jpg';
               });
@@ -476,6 +488,30 @@ class _OutletInteractionReportScreenState
       ),
     );
   }
+
+   Future<void> uploadFiles(List<String?> paths) async {
+  var uri = Uri.parse("https://cornerstone.core.tz/promo/upload-files");
+  var request = http.MultipartRequest("POST", uri);
+
+  // Add text fields
+  request.fields['user_id'] = 'yekonga_user_1';
+
+  // Add multiple files
+  for (var path in paths) {
+    var file = await http.MultipartFile.fromPath('files', path??"");
+    request.files.add(file);
+  }
+
+  var response = await request.send();
+
+  if (response.statusCode == 200) {
+    debugPrint("Uploaded!: ${response.contentLength}");
+    print("Uploaded!");
+  } else {
+    print("Failed with status: ${response.statusCode}");
+  }
+}
+              
 
   Widget _buildProductAwarenessSection() {
     // Section: Awareness and availability of Knauf products.
@@ -1178,6 +1214,50 @@ class _OutletInteractionReportScreenState
     return _orderedProducts.values.any((selected) => selected == true);
   }
 
+  // Helper method to show validation error dialog
+  void _showValidationErrorDialog(String message) {
+    showDialog<void>(
+      context: context,
+      barrierDismissible: false, // Can't close by tapping outside
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text(
+            'Required Fields Missing',
+            style: TextStyle(
+              color: AppColors.textPrimary,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          content: Text(
+            message,
+            style: const TextStyle(
+              color: AppColors.textSecondary,
+              fontSize: 16,
+            ),
+          ),
+          backgroundColor: AppColors.cardBackground,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text(
+                'Close',
+                style: TextStyle(
+                  color: AppColors.knaufBlue,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   // Helper widget: checklist of competitor products available at the outlet.
   Widget _buildCompetitorCheckboxes() {
     return Column(
@@ -1430,44 +1510,19 @@ class _OutletInteractionReportScreenState
   /// Shows a progress dialog, submits the report, then closes and shows result.
   Future<void> _submitReport() async {
     if (!_formKey.currentState!.validate()) {
-      // Show snackbar when validation fails
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Please fill in all required fields'),
-            backgroundColor: AppColors.error,
-            duration: Duration(seconds: 3),
-          ),
-        );
-      }
+      _showValidationErrorDialog('Please fill in all required fields');
       return;
     }
 
     // Validate competitor products checkbox
     if (!_validateCompetitorProducts()) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Please select at least one competitor product'),
-            backgroundColor: AppColors.error,
-            duration: Duration(seconds: 3),
-          ),
-        );
-      }
+      _showValidationErrorDialog('Please select at least one competitor product');
       return;
     }
 
     // Validate ordered products checkbox (only if order was placed)
     if (_orderPlaced == true && !_validateOrderedProducts()) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Please select at least one product to order'),
-            backgroundColor: AppColors.error,
-            duration: Duration(seconds: 3),
-          ),
-        );
-      }
+      _showValidationErrorDialog('Please select at least one product to order');
       return;
     }
 

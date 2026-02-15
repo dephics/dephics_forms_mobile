@@ -142,12 +142,12 @@ class _OutletInteractionReportScreenState
     _challengesController.dispose();
     _topCompetitorController.dispose();
     _additionalNotesController.dispose();
-    
+
     // Dispose product quantity controllers
     for (final controller in _productQuantities.values) {
       controller.dispose();
     }
-    
+
     super.dispose();
   }
 
@@ -459,17 +459,22 @@ class _OutletInteractionReportScreenState
             label: 'Outlet picture / Picha ya Duka',
             description: 'Take a clear photo of storefront.',
             fileName: _outletPicture,
-            onPressed: () async{
-              FilePickerResult? result = await FilePicker.platform.pickFiles(allowMultiple: true);
+            onPressed: () async {
+              FilePickerResult? result = await FilePicker.platform.pickFiles(
+                allowMultiple: true,
+              );
               if (result != null) {
-                List<File> files = result.paths.map((path) => File(path!)).toList();
-                
+                // List<File> files = result.paths
+                //     .map((path) => File(path!))
+                //     .toList();
+
                 // Upload files and get URLs
                 List<String>? uploadedUrls = await uploadFiles(result.paths);
-                
+
                 setState(() {
                   if (uploadedUrls != null && uploadedUrls.isNotEmpty) {
-                    _outletPicture = uploadedUrls.first; // First URL for outlet picture
+                    _outletPicture =
+                        uploadedUrls.first; // First URL for outlet picture
                   }
                 });
               } else {
@@ -482,17 +487,22 @@ class _OutletInteractionReportScreenState
             label: 'Outlet picture after branding',
             description: 'Capture branded materials on site.',
             fileName: _brandedPicture,
-            onPressed: () async{
-              FilePickerResult? result = await FilePicker.platform.pickFiles(allowMultiple: true);
+            onPressed: () async {
+              FilePickerResult? result = await FilePicker.platform.pickFiles(
+                allowMultiple: true,
+              );
               if (result != null) {
-                List<File> files = result.paths.map((path) => File(path!)).toList();
-                
+                // List<File> files = result.paths
+                //     .map((path) => File(path!))
+                //     .toList();
+
                 // Upload files and get URLs
                 List<String>? uploadedUrls = await uploadFiles(result.paths);
-                
+
                 setState(() {
                   if (uploadedUrls != null && uploadedUrls.isNotEmpty) {
-                    _brandedPicture = uploadedUrls.first; // First URL for branded picture
+                    _brandedPicture =
+                        uploadedUrls.first; // First URL for branded picture
                   }
                 });
               } else {
@@ -505,41 +515,40 @@ class _OutletInteractionReportScreenState
     );
   }
 
-   Future<List<String>?> uploadFiles(List<String?> paths) async {
-  var uri = Uri.parse("https://cornerstone.core.tz/promo/upload-files");
-  var request = http.MultipartRequest("POST", uri);
+  Future<List<String>?> uploadFiles(List<String?> paths) async {
+    var uri = Uri.parse("https://cornerstone.core.tz/promo/upload-files");
+    var request = http.MultipartRequest("POST", uri);
 
-  // Add text fields
-  request.fields['user_id'] = 'yekonga_user_1';
+    // Add text fields
+    request.fields['user_id'] = 'yekonga_user_1';
 
-  // Add multiple files
-  for (var path in paths) {
-    var file = await http.MultipartFile.fromPath('files', path??"");
-    request.files.add(file);
-  }
-
-  var response = await request.send();
-
-  if (response.statusCode == 200) {
-    var responseBody = await response.stream.bytesToString();
-    var responseData = jsonDecode(responseBody);
-    debugPrint("Responsedata: $responseData");
-    // Extract file URLs from response
-    List<String> fileUrls = [];
-    if (responseData['files'] != null) {
-      var files = responseData['files'] as List;
-      for (var file in files) {
-        fileUrls.add(file.toString());
-      }
+    // Add multiple files
+    for (var path in paths) {
+      var file = await http.MultipartFile.fromPath('files', path ?? "");
+      request.files.add(file);
     }
-    
-    return fileUrls;
-  } else {
-    print("Failed with status: ${response.statusCode}");
-    return null;
+
+    var response = await request.send();
+
+    if (response.statusCode == 200) {
+      var responseBody = await response.stream.bytesToString();
+      var responseData = jsonDecode(responseBody);
+      debugPrint("Responsedata: $responseData");
+      // Extract file URLs from response
+      List<String> fileUrls = [];
+      if (responseData['files'] != null) {
+        var files = responseData['files'] as List;
+        for (var file in files) {
+          fileUrls.add(file.toString());
+        }
+      }
+
+      return fileUrls;
+    } else {
+      print("Failed with status: ${response.statusCode}");
+      return null;
+    }
   }
-}
-              
 
   Widget _buildProductAwarenessSection() {
     // Section: Awareness and availability of Knauf products.
@@ -1010,8 +1019,12 @@ class _OutletInteractionReportScreenState
                 style: TextStyle(color: AppColors.textPrimary),
               ),
               Text(
-                fileName,
+                getFirstFifteen(fileName),
                 style: TextStyle(color: AppColors.textSecondary, fontSize: 12),
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+
+                softWrap: true,
               ),
             ],
           ),
@@ -1023,6 +1036,13 @@ class _OutletInteractionReportScreenState
         ),
       ],
     );
+  }
+
+  String getFirstFifteen(String text) {
+    if (text.length <= 20) {
+      return text;
+    }
+    return "${text.substring(0, 20)}...";
   }
 
   // Helper widget: yes/no radio group used in multiple sections.
@@ -1178,10 +1198,7 @@ class _OutletInteractionReportScreenState
             activeColor: AppColors.knaufBlue,
           ),
           Expanded(
-            child: Text(
-              productName,
-              style: const TextStyle(fontSize: 14),
-            ),
+            child: Text(productName, style: const TextStyle(fontSize: 14)),
           ),
           if (_orderedProducts[productName] == true)
             SizedBox(
@@ -1204,9 +1221,15 @@ class _OutletInteractionReportScreenState
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide(color: AppColors.inputFocusedBorder, width: 2),
+                    borderSide: BorderSide(
+                      color: AppColors.inputFocusedBorder,
+                      width: 2,
+                    ),
                   ),
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 8,
+                  ),
                 ),
               ),
             ),
@@ -1218,9 +1241,10 @@ class _OutletInteractionReportScreenState
   // Helper method to build order quantities map
   Map<String, int>? _buildOrderQuantities() {
     final Map<String, int> quantities = {};
-    
+
     for (final entry in _orderedProducts.entries) {
-      if (entry.value == true) { // if product is selected
+      if (entry.value == true) {
+        // if product is selected
         final quantityText = _productQuantities[entry.key]?.text;
         final quantity = int.tryParse(quantityText ?? '') ?? 0;
         if (quantity > 0) {
@@ -1228,7 +1252,7 @@ class _OutletInteractionReportScreenState
         }
       }
     }
-    
+
     return quantities.isEmpty ? null : quantities;
   }
 
@@ -1488,7 +1512,7 @@ class _OutletInteractionReportScreenState
       outletPhone: _phoneController.text.trim().isEmpty
           ? null
           : '$_selectedCountryCode ${_phoneController.text.trim()}',
-      outletPicture: null,
+      outletPicture: _outletPicture,
       outletStreet: _streetController.text.trim().isEmpty
           ? null
           : _streetController.text.trim(),
@@ -1525,7 +1549,7 @@ class _OutletInteractionReportScreenState
       orderQuantities: _buildOrderQuantities(),
       orderStatus: _selectedOrderStatus,
       brandingMaterials: brandingSelected.isEmpty ? null : brandingSelected,
-      outletPictureAfter: null,
+      outletPictureAfter: _brandedPicture,
       notes: _additionalNotesController.text.trim().isEmpty
           ? null
           : _additionalNotesController.text.trim(),
@@ -1544,7 +1568,9 @@ class _OutletInteractionReportScreenState
 
     // Validate competitor products checkbox
     if (!_validateCompetitorProducts()) {
-      _showValidationErrorDialog('Please select at least one competitor product');
+      _showValidationErrorDialog(
+        'Please select at least one competitor product',
+      );
       return;
     }
 
@@ -1566,16 +1592,12 @@ class _OutletInteractionReportScreenState
       // await _reportService.submitReport(_buildPayload());
       var payload = _buildPayload();
       final variables = payload.toMap();
-      var respo = await YeGenV2().spShoot(query: "", variables: variables);
-      debugPrint("Responsee: $respo");
+      debugPrint("Responsee: $variables");
+      await YeGenV2().spShoot(query: "", variables: variables);
+      // debugPrint("Responsee: $respo");
       if (!mounted) return;
       Navigator.of(context).pop();
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Report submitted successfully.'),
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
+      showReportSentDialog(context);
     } catch (e) {
       if (!mounted) return;
       Navigator.of(context).pop();
@@ -1608,6 +1630,130 @@ class _OutletInteractionReportScreenState
       ),
     );
   }
+}
+
+void showReportSentDialog(BuildContext context) {
+  showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (BuildContext context) {
+      return Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        child: Container(
+          padding: const EdgeInsets.all(40),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Success Icon
+              Container(
+                width: 80,
+                height: 80,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFD4F4DD),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.check,
+                  color: Color(0xFF00C853),
+                  size: 40,
+                ),
+              ),
+              const SizedBox(height: 24),
+
+              // Title
+              const Text(
+                'Report Sent!',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF1A1A1A),
+                ),
+              ),
+              const SizedBox(height: 12),
+
+              // Description
+              const Text(
+                'The outlet interaction has been successfully recorded\nin the system.',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Color(0xFF666666),
+                  height: 1.5,
+                ),
+              ),
+              const SizedBox(height: 32),
+
+              // Add Another Report Button
+              SizedBox(
+                width: double.infinity,
+                height: 50,
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    // Add your logic to add another report
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.knaufBlue,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(25),
+                    ),
+                    elevation: 0,
+                  ),
+                  child: const Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.add, size: 20),
+                      SizedBox(width: 8),
+                      Text(
+                        'Add Another Report',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+
+              // Back to Home Button
+              SizedBox(
+                width: double.infinity,
+                height: 50,
+                child: OutlinedButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    Navigator.of(context).pop();
+                    // Add your logic to navigate to home
+                  },
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: AppColors.knaufBlue,
+                    side: const BorderSide(
+                      color: AppColors.knaufBlue,
+                      width: 1.5,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(25),
+                    ),
+                  ),
+                  child: const Text(
+                    'Back to Home',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    },
+  );
 }
 
 /// Full-screen style progress dialog used during report submission.

@@ -4,7 +4,7 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
     <application
-        android:label="survey_app"
+        android:label="Core Field App"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon">
         <activity

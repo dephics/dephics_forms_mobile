@@ -53,12 +53,12 @@ var sharedHeaders = {
 const respGood = "isGood";
 const respBody = 'body';
 const respError = "error";
+const prodProfileUrl = "https://cornerstone.core.tz/auth/me";
 const prodPulGenrl = "https://cornerstone.core.tz/promo/graphql";
-const prodPicGenrl = "https://cornerstone.core.tz/promo/upload-files"; // {files:[]}
+const prodPicGenrl =
+    "https://cornerstone.core.tz/promo/upload-files"; // {files:[]}
 const prodPosGenrl = "https://cornerstone.core.tz/promo/form-data";
-// const debugGenrl = "http://192.168.100.16:1235/graphql";
 const prodAuthrl = "https://cornerstone.core.tz/auth/graphql/auth";
-// const debugAuthrl = "http://192.168.100.16:1235/graphql/auth";
 
 class YeAuth {
   var yeauthrl = Uri.parse(prodAuthrl);
@@ -92,6 +92,7 @@ files:
 class YeGenV1 {
   var yegenrl = Uri.parse(prodPulGenrl);
   var genAuthRl = Uri.parse(prodAuthrl);
+
   shooterAuth({variables, query}) async {
     try {
       var response = await http.post(
@@ -124,6 +125,21 @@ class YeGenV1 {
         body: jsonEncode({'query': query, 'variables': variables}),
       );
       debugPrint("Access: $uAccessToken");
+
+      if (response.statusCode == 400 ||
+          response.statusCode == 401 ||
+          response.statusCode == 403) {
+        var refreshed = await refreshTokenShoot();
+        if (refreshed) {
+          return await shooter(variables: variables, query: query);
+        } else {
+          return {
+            respGood: false,
+            respBody: {respError: "Unauthorized and token refresh failed"},
+          };
+        }
+      }
+
       var body = jsonDecode(response.body);
       return {respGood: true, respBody: body};
     } catch (e) {
@@ -142,6 +158,21 @@ class YeGenV1 {
         body: jsonEncode(variables),
         // body: jsonEncode({'query': query, 'variables': variables}),
       );
+
+      if (response.statusCode == 400 ||
+          response.statusCode == 401 ||
+          response.statusCode == 403) {
+        var refreshed = await refreshTokenShoot();
+        if (refreshed) {
+          return await spShoot(variables: variables, query: query);
+        } else {
+          return {
+            respGood: false,
+            respBody: {respError: "Unauthorized and token refresh failed"},
+          };
+        }
+      }
+
       var body = jsonDecode(response.body);
       return {respGood: true, respBody: body};
     } catch (e) {
@@ -157,7 +188,8 @@ class YeGenV2 {
   var yegenrl = Uri.parse(prodPosGenrl);
   var genAuthRl = Uri.parse(prodAuthrl);
   var genPicRl = Uri.parse(prodPicGenrl);
-  shooterAuth({variables, query}) async {
+
+  Future<Map<String, dynamic>> shooterAuth({variables, query}) async {
     try {
       var response = await http.post(
         genAuthRl,
@@ -175,7 +207,7 @@ class YeGenV2 {
     }
   }
 
-  shooter({variables, query}) async {
+  Future<Map<String, dynamic>> shooterForm({variables, query}) async {
     try {
       final SharedPreferences prefs = await SharedPreferences.getInstance();
       var uAccessToken = prefs.getString(ygAccesstoken);
@@ -188,6 +220,21 @@ class YeGenV2 {
         },
         body: jsonEncode({'query': query, 'variables': variables}),
       );
+
+      if (response.statusCode == 400 ||
+          response.statusCode == 401 ||
+          response.statusCode == 403) {
+        var refreshed = await refreshTokenShoot();
+        if (refreshed) {
+          return await shooterForm(variables: variables, query: query);
+        } else {
+          return {
+            respGood: false,
+            respBody: {respError: "Unauthorized and token refresh failed"},
+          };
+        }
+      }
+
       var body = jsonDecode(response.body);
       return {respGood: true, respBody: body};
     } catch (e) {
@@ -212,6 +259,21 @@ class YeGenV2 {
         body: jsonEncode(variables),
         // body: jsonEncode({'query': query, 'variables': variables}),
       );
+
+      if (response.statusCode == 400 ||
+          response.statusCode == 401 ||
+          response.statusCode == 403) {
+        var refreshed = await refreshTokenShoot();
+        if (refreshed) {
+          return await spShoot(variables: variables, query: query);
+        } else {
+          return {
+            respGood: false,
+            respBody: {respError: "Unauthorized and token refresh failed"},
+          };
+        }
+      }
+
       var body = jsonDecode(response.body);
       return {respGood: true, respBody: body};
     } catch (e) {
@@ -234,8 +296,21 @@ class YeGenV2 {
           'Authorization': "Bearer $uAccessToken",
         },
         body: jsonEncode(variables),
-        // body: jsonEncode({'query': query, 'variables': variables}),
       );
+
+      if (response.statusCode == 400 ||
+          response.statusCode == 401 ||
+          response.statusCode == 403) {
+        var refreshed = await refreshTokenShoot();
+        if (refreshed) {
+          return await picShoot(variables: variables, query: query);
+        } else {
+          return {
+            respGood: false,
+            respBody: {respError: "Unauthorized and token refresh failed"},
+          };
+        }
+      }
 
       var body = jsonDecode(response.body);
       debugPrint("Kookay: $variables");
@@ -248,4 +323,46 @@ class YeGenV2 {
       };
     }
   }
+}
+
+Future<bool> refreshTokenShoot() async {
+  try {
+    var genAuthRl = Uri.parse(prodAuthrl);
+
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    var uRefreshToken = prefs.getString(ygRefreshtoken);
+    var query =
+        """
+        query {
+          refreshToken(refreshToken:"$uRefreshToken") {
+            refreshToken
+            accessToken
+          }
+        }""";
+
+    var response = await http.post(
+      genAuthRl,
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({'query': query, 'variables': {}}),
+    );
+
+    var body = jsonDecode(response.body);
+    debugPrint(response.body);
+
+    if (body['data'] != null && body['data']['refreshToken'] != null) {
+      var newAccessToken = body['data']['refreshToken']['accessToken'];
+      var newRefreshToken = body['data']['refreshToken']['refreshToken'];
+
+      await prefs.setString(ygAccesstoken, newAccessToken);
+      await prefs.setString(ygRefreshtoken, newRefreshToken);
+      return true;
+    }
+  } catch (e) {
+    debugPrint("$e");
+  }
+
+  return false;
 }
